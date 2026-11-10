@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Balgam Family Tree</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <h1>Balgam Family Tree</h1>
+  <div class="spacer"></div>
+  <label class="inline">View
+    <select id="viewMode">
+      <option value="all">Whole family</option>
+      <option value="lineage">Direct line of selected person</option>
+      <option value="ancestors">Ancestors of selected person</option>
+      <option value="descendants">Descendants of selected person</option>
+    </select>
+  </label>
+  <button id="btnAdd" class="primary">+ Add person</button>
+  <button id="btnData">Import / Export</button>
+</header>
+
+<div id="banner" class="banner" hidden>
+  <span><strong>Sample data.</strong> This is a made-up family so you can try the app. Import your real family, or start from scratch.</span>
+  <button id="btnClear">Clear sample &amp; start my own</button>
+</div>
+
+<main class="layout">
+  <aside class="sidebar" aria-label="People">
+    <input id="search" type="search" placeholder="Search people…" aria-label="Search people">
+    <div id="count" class="muted small"></div>
+    <ul id="list" class="people"></ul>
+  </aside>
+
+  <section class="stage">
+    <svg id="tree" role="img" aria-label="Family tree"><g id="viewport"><g id="edges"></g><g id="nodes"></g></g></svg>
+    <div class="zoom">
+      <button id="zIn" title="Zoom in" aria-label="Zoom in">+</button>
+      <button id="zOut" title="Zoom out" aria-label="Zoom out">−</button>
+      <button id="zFit" title="Fit whole tree" aria-label="Fit to screen">⤢</button>
+    </div>
+    <div class="legend small muted"><i class="sw m"></i>Male <i class="sw f"></i>Female <i class="sw o"></i>Other/unknown <i class="ln"></i>Spouse <i class="ln dash"></i>Partner (shared child)</div>
+    <div id="empty" class="empty" hidden>
+      <h2>No one here yet</h2>
+      <p>Add the first person, or import a CSV / JSON file.</p>
+      <button id="btnAdd2" class="primary">+ Add first person</button>
+    </div>
+  </section>
+
+  <aside class="panel">
+    <div class="tabs" role="tablist">
+      <button role="tab" data-tab="person" class="on">Person</button>
+      <button role="tab" data-tab="relation">Find relationship</button>
+    </div>
+
+    <div id="tab-person" class="tabbody"></div>
+
+    <div id="tab-relation" class="tabbody" hidden>
+      <p class="muted small">Pick two people here — or just click two people on the tree.</p>
+      <label>Person A <select id="relA"></select></label>
+      <div class="swap"><button id="relSwap" title="Swap" aria-label="Swap people">⇅</button></div>
+      <label>Person B <select id="relB"></select></label>
+      <button id="relGo" class="primary wide">Find relationship</button>
+      <div id="relResult" class="result" aria-live="polite"></div>
+    </div>
+  </aside>
+</main>
+
+<dialog id="personDialog">
+  <form method="dialog" id="personForm" autocomplete="off">
+    <h2 id="pdTitle">Person</h2>
+    <div class="row"><label>Name <input name="name" required></label>
+      <label>Nickname <input name="nickname" placeholder="e.g. Chitti"></label></div>
+    <div class="row">
+      <label>Gender
+        <select name="gender"><option value="">Other / unknown</option><option value="M">Male</option><option value="F">Female</option></select>
+      </label>
+      <label>Born <input name="born" placeholder="e.g. 1957 or 12 Mar 1957"></label>
+      <label>Died <input name="died" placeholder="leave blank if living"></label>
+    </div>
+    <label>Place <input name="place" placeholder="Village / town"></label>
+    <div class="row">
+      <label>Father <select name="father"></select></label>
+      <label>Mother <select name="mother"></select></label>
+    </div>
+    <label>Spouse(s) / partner(s)
+      <select name="spouses" multiple size="4"></select>
+      <span class="muted small">Ctrl/Cmd-click to pick more than one.</span>
+    </label>
+    <label>Notes <textarea name="notes" rows="3"></textarea></label>
+    <div class="actions">
+      <button type="button" id="pdDelete" class="danger">Delete</button>
+      <div class="spacer"></div>
+      <button type="button" id="pdCancel">Cancel</button>
+      <button type="submit" class="primary" id="pdSave">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dataDialog">
+  <h2>Import / Export</h2>
+  <p class="muted small">Your changes are saved in this browser automatically. Export a backup to keep or share it.</p>
+  <div class="grid2">
+    <button id="exJson">Export JSON (backup)</button>
+    <button id="exCsv">Export CSV</button>
+  </div>
+  <h3>Import</h3>
+  <p class="small">Accepts a <strong>.json</strong> backup or a <strong>.csv</strong> with columns
+    <code>name, nickname, gender, born, died, place, father, mother, spouse, notes</code>.
+    Father, mother and spouse are written as the other person’s <em>name</em> (several spouses separated by <code>;</code>).
+    Importing <strong>replaces</strong> what’s currently in the app.</p>
+  <div class="grid2">
+    <button id="tplCsv">Download CSV template</button>
+    <label class="filebtn">Choose file…<input type="file" id="importFile" accept=".json,.csv,text/csv,application/json" hidden></label>
+  </div>
+  <h3>Reset</h3>
+  <div class="grid2">
+    <button id="resetSample">Reset to original family data</button>
+    <button id="clearAll" class="danger">Delete everyone</button>
+  </div>
+  <div class="actions"><div class="spacer"></div><button id="dataClose" class="primary">Done</button></div>
+</dialog>
+
+<script src="relations.js"></script>
+<script src="layout.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
